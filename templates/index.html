@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Management System - ML Disease Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <h1><i class="fas fa-hospital"></i> Patient Management System</h1>
+                <p class="subtitle">ML-Based Disease Prediction & Hospital Recommendations</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#get-started">Get Started</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Smart Healthcare at Your Fingertips</h2>
+                <p>Intelligent disease prediction using machine learning and location-aware hospital recommendations</p>
+                <a href="#get-started" class="btn btn-primary">Get Started</a>
+                <a href="/dashboard" class="btn btn-secondary">Go to Dashboard</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-user-medical"></i>
+                    <h3>Patient Records Management</h3>
+                    <p>Store and manage comprehensive patient medical records including medical history, medications, and allergies.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>AI Disease Prediction</h3>
+                    <p>Advanced machine learning model that predicts possible diseases from symptoms with high accuracy.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-heart-pulse"></i>
+                    <h3>Health Recommendations</h3>
+                    <p>Get personalized Do's and Don'ts advice based on predicted disease for quick symptom relief.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-map-location-dot"></i>
+                    <h3>Hospital Finder</h3>
+                    <p>Locate nearby government, charitable, and private hospitals based on your location and budget.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Severity Analysis</h3>
+                    <p>Get severity scores and emergency recommendations based on symptoms.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-history"></i>
+                    <h3>History Tracking</h3>
+                    <p>View complete prediction history and hospital recommendations for better health tracking.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Get Started Section -->
+    <section id="get-started" class="get-started">
+        <div class="container">
+            <h2>Quick Start Guide</h2>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Add Patient</h3>
+                    <p>Register patient details including location coordinates for hospital finder</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Enter Symptoms</h3>
+                    <p>Describe symptoms the patient is experiencing</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Prediction</h3>
+                    <p>ML model predicts disease with confidence percentage</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Find Hospitals</h3>
+                    <p>Discover nearby hospitals with cost and emergency info</p>
+                </div>
+            </div>
+            <div class="cta-buttons">
+                <a href="/dashboard" class="btn btn-primary">Open Dashboard</a>
+                <a href="/api/api-docs" class="btn btn-secondary">View API Docs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Sample Section -->
+    <section class="api-sample">
+        <div class="container">
+            <h2>API Usage Examples</h2>
+            <dl class="api-examples">
+                <dt><code>POST /api/predict_disease</code></dt>
+                <dd>
+                    <pre><code>{
+    "patient_id": 1,
+    "symptoms": "fever, cough, sore_throat, body_ache"
+}</code></pre>
+                </dd>
+                
+                <dt><code>POST /api/recommend_hospital</code></dt>
+                <dd>
+                    <pre><code>{
+    "patient_id": 1,
+    "severity": "High"
+}</code></pre>
+                </dd>
+            </dl>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Patient Management System. All rights reserved.</p>
+            <p>Combining AI and Healthcare for Better Patient Experience</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

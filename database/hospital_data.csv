@@ -1,0 +1,24 @@
+hospital_name,city,state,type,cost_category,latitude,longitude,contact,emergency
+Apollo Hospital Delhi,Delhi,Delhi,private,high,28.5355,77.1234,011-4910-5000,Yes
+Government Hospital Delhi,Delhi,Delhi,government,free,28.5921,77.1891,011-2334-5678,Yes
+Charitable Clinic Delhi,Delhi,Delhi,charitable,low,28.6032,77.1824,011-2345-6789,Yes
+Max Healthcare Delhi,Delhi,Delhi,private,high,28.4595,77.123,011-4015-9000,Yes
+Primary Health Center Delhi,Delhi,Delhi,government,free,28.7041,77.2753,011-2567-8901,No
+Tata Memorial Hospital Mumbai,Mumbai,Maharashtra,government,low,19.0176,72.8298,022-2417-7000,Yes
+Apollo Hospital Mumbai,Mumbai,Maharashtra,private,high,19.0896,72.8656,022-2828-1000,Yes
+Fortis Hospital Mumbai,Mumbai,Maharashtra,private,high,19.1136,72.8696,022-6876-6000,Yes
+Municipal Hospital Mumbai,Mumbai,Maharashtra,government,free,19.0176,72.8476,022-2262-1234,Yes
+BMC Health Center Mumbai,Mumbai,Maharashtra,government,free,19.076,72.8777,022-2181-1111,No
+Apollo Hospital Bangalore,Bangalore,Karnataka,private,high,13.0827,80.2707,080-4040-4040,Yes
+Government Medical College Bangalore,Bangalore,Karnataka,government,free,13.0047,80.2394,080-2260-2060,Yes
+Manipal Hospital Bangalore,Bangalore,Karnataka,private,high,13.1939,77.6245,080-6969-6969,Yes
+St. Martha Hospital Bangalore,Bangalore,Karnataka,charitable,low,13.1939,77.57,080-2555-8888,Yes
+Bangalore Health Center,Bangalore,Karnataka,government,free,13.1939,77.6245,080-2341-2341,No
+SSKM Hospital Kolkata,Kolkata,West Bengal,government,free,22.5726,88.3787,033-2356-0556,Yes
+Apollo Hospital Kolkata,Kolkata,West Bengal,private,high,22.509,88.3857,033-3066-3737,Yes
+Woodlands Hospital Kolkata,Kolkata,West Bengal,private,high,22.5487,88.357,033-4450-9999,Yes
+Mother Charity Hospital Kolkata,Kolkata,West Bengal,charitable,low,22.5567,88.3651,033-2487-8900,Yes
+Apollo Hospital Hyderabad,Hyderabad,Telangana,private,high,17.385,78.4867,040-2359-0000,Yes
+Osmania General Hospital,Hyderabad,Telangana,government,free,17.3862,78.5036,040-2335-8851,Yes
+Care Hospital Hyderabad,Hyderabad,Telangana,private,high,17.4009,78.4506,040-4025-7000,Yes
+Public Health Center Hyderabad,Hyderabad,Telangana,government,free,17.39,78.4735,040-2345-6789,No

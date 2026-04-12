@@ -1,0 +1,19 @@
+# Patient Management System - Requirements
+
+# Web Framework
+Flask==2.3.0
+Flask-CORS==4.0.0
+
+# Machine Learning
+scikit-learn==1.2.0
+numpy==1.24.3
+pandas==1.5.3
+
+# Data Processing
+scipy==1.10.0
+
+# Optional: For advanced ML features
+joblib==1.2.0
+
+# Development (optional)
+python-dotenv==1.0.0

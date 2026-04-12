@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Patient Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <h1><i class="fas fa-hospital"></i> Dashboard</h1>
+            </div>
+            <a href="/" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#patients" onclick="showSection('patients')" class="active"><i class="fas fa-users"></i> Patients</a></li>
+                <li><a href="#predict" onclick="showSection('predict')"><i class="fas fa-brain"></i> Predict Disease</a></li>
+                <li><a href="#hospitals" onclick="showSection('hospitals')"><i class="fas fa-map-location-dot"></i> Find Hospitals</a></li>
+                <li><a href="#history" onclick="showSection('history')"><i class="fas fa-history"></i> History</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Patients Section -->
+            <section id="patients-section" class="content-section active">
+                <h2>Patient Management</h2>
+                
+                <!-- Add Patient Form -->
+                <div class="form-card">
+                    <h3>Add New Patient</h3>
+                    <form id="addPatientForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="name">Name *</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="age">Age *</label>
+                                <input type="number" id="age" name="age" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender *</label>
+                                <select id="gender" name="gender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact">Contact *</label>
+                                <input type="tel" id="contact" name="contact" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="location_city">City *</label>
+                                <input type="text" id="location_city" name="location_city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="location_state">State *</label>
+                                <input type="text" id="location_state" name="location_state" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="location_pincode">Pincode *</label>
+                                <input type="text" id="location_pincode" name="location_pincode" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="latitude">Latitude *</label>
+                                <input type="number" id="latitude" name="latitude" step="0.0001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="longitude">Longitude *</label>
+                                <input type="number" id="longitude" name="longitude" step="0.0001" required>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="medical_history">Medical History</label>
+                                <textarea id="medical_history" name="medical_history" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="current_medications">Current Medications</label>
+                                <textarea id="current_medications" name="current_medications" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="allergies">Allergies</label>
+                                <textarea id="allergies" name="allergies" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Patient</button>
+                    </form>
+                </div>
+
+                <!-- Patients List -->
+                <div class="card">
+                    <h3>All Patients</h3>
+                    <div id="patientsList" class="patients-list">
+                        <p>Loading patients...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Prediction Section -->
+            <section id="predict-section" class="content-section">
+                <h2>Disease Prediction</h2>
+                
+                <div class="form-card">
+                    <h3>Predict Disease from Symptoms</h3>
+                    <form id="predictForm">
+                        <div class="form-group">
+                            <label for="predict_patient_id">Select Patient *</label>
+                            <select id="predict_patient_id" required>
+                                <option value="">Select a patient...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="symptoms">Symptoms (comma-separated) *</label>
+                            <textarea id="symptoms" name="symptoms" rows="4" 
+                                    placeholder="fever, cough, sore_throat, body_ache" required></textarea>
+                            <p class="hint">Common symptoms: fever, cough, sore_throat, runny_nose, body_ache, fatigue, headache, nausea, vomiting, diarrhea, chest_pain, etc.</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Predict Disease</button>
+                    </form>
+                </div>
+
+                <!-- Prediction Result -->
+                <div id="predictionResult" class="card" style="display: none;">
+                    <h3>Prediction Result</h3>
+                    <div id="resultContent"></div>
+                </div>
+            </section>
+
+            <!-- Hospital Recommendation Section -->
+            <section id="hospitals-section" class="content-section">
+                <h2>Hospital Recommendations</h2>
+                
+                <div class="form-card">
+                    <h3>Find Nearby Hospitals</h3>
+                    <form id="hospitalForm">
+                        <div class="form-group">
+                            <label for="hospital_patient_id">Select Patient *</label>
+                            <select id="hospital_patient_id" required>
+                                <option value="">Select a patient...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="severity">Disease Severity *</label>
+                            <select id="severity" required>
+                                <option value="">Select severity...</option>
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cost_filter">Hospital Cost (Optional)</label>
+                            <select id="cost_filter">
+                                <option value="">Any Cost</option>
+                                <option value="free">Free</option>
+                                <option value="low">Low Cost</option>
+                                <option value="medium">Medium Cost</option>
+                                <option value="high">High Cost</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Find Hospitals</button>
+                    </form>
+                </div>
+
+                <!-- Hospital Results -->
+                <div id="hospitalResult" class="card" style="display: none;">
+                    <h3>Nearby Hospitals</h3>
+                    <div id="hospitalContent"></div>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section id="history-section" class="content-section">
+                <h2>Patient History</h2>
+                
+                <div class="form-card">
+                    <h3>View Patient History</h3>
+                    <div class="form-group">
+                        <label for="history_patient_id">Select Patient *</label>
+                        <select id="history_patient_id" required>
+                            <option value="">Select a patient...</option>
+                        </select>
+                    </div>
+                    <button onclick="loadPatientHistory()" class="btn btn-primary">Load History</button>
+                </div>
+
+                <!-- History Results -->
+                <div id="historyResult" class="card" style="display: none;">
+                    <h3>Patient History</h3>
+                    <div id="historyContent"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Alert Messages -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>
