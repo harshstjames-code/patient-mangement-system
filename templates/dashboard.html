@@ -26,6 +26,10 @@
                 <li><a href="#patients" onclick="showSection('patients')" class="active"><i class="fas fa-users"></i> Patients</a></li>
                 <li><a href="#predict" onclick="showSection('predict')"><i class="fas fa-brain"></i> Predict Disease</a></li>
                 <li><a href="#hospitals" onclick="showSection('hospitals')"><i class="fas fa-map-location-dot"></i> Find Hospitals</a></li>
+                <li><a href="#hospital-directory" onclick="showSection('hospital-directory')"><i class="fas fa-hospital"></i> Hospital List</a></li>
+                <li><a href="#doctor-directory" onclick="showSection('doctor-directory')"><i class="fas fa-user-doctor"></i> Doctor List</a></li>
+                <li><a href="#appointments" onclick="showSection('appointments')"><i class="fas fa-calendar-check"></i> Book Appointment</a></li>
+                <li><a href="#appointment-history" onclick="showSection('appointment-history')"><i class="fas fa-notes-medical"></i> Appointment History</a></li>
                 <li><a href="#history" onclick="showSection('history')"><i class="fas fa-history"></i> History</a></li>
             </ul>
         </aside>
@@ -202,6 +206,244 @@
                 <div id="historyResult" class="card" style="display: none;">
                     <h3>Patient History</h3>
                     <div id="historyContent"></div>
+                </div>
+            </section>
+
+            <!-- Hospital Directory Section -->
+            <section id="hospital-directory-section" class="content-section">
+                <h2>Hospital Directory</h2>
+
+                <div class="form-card">
+                    <h3>Add New Hospital</h3>
+                    <form id="addHospitalForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="hospital_name">Hospital Name *</label>
+                                <input type="text" id="hospital_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hospital_address">Address *</label>
+                                <input type="text" id="hospital_address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hospital_city">City *</label>
+                                <input type="text" id="hospital_city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hospital_state">State *</label>
+                                <input type="text" id="hospital_state" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hospital_pincode">Pincode *</label>
+                                <input type="text" id="hospital_pincode" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hospital_contact">Contact Number *</label>
+                                <input type="text" id="hospital_contact" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hospital_email">Email</label>
+                                <input type="email" id="hospital_email">
+                            </div>
+                            <div class="form-group">
+                                <label for="hospital_departments">Departments</label>
+                                <input type="text" id="hospital_departments" placeholder="Cardiology,Neurology,Orthopedic">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Hospital</button>
+                    </form>
+                </div>
+
+                <div class="form-card">
+                    <h3>Search Hospitals by Location</h3>
+                    <form id="hospitalSearchForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="search_city">City</label>
+                                <input type="text" id="search_city" placeholder="e.g. Delhi">
+                            </div>
+                            <div class="form-group">
+                                <label for="search_state">State</label>
+                                <input type="text" id="search_state" placeholder="e.g. Maharashtra">
+                            </div>
+                            <div class="form-group">
+                                <label for="search_pincode">Pincode</label>
+                                <input type="text" id="search_pincode" placeholder="e.g. 110001">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Search Hospitals</button>
+                        <button type="button" class="btn btn-secondary" onclick="loadHospitals()">Reset</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Hospitals</h3>
+                    <div id="hospitalDirectoryList" class="hospitals-grid">
+                        <p>Loading hospitals...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Doctor Directory Section -->
+            <section id="doctor-directory-section" class="content-section">
+                <h2>Doctor Directory</h2>
+
+                <div class="form-card">
+                    <h3>Add New Doctor</h3>
+                    <form id="addDoctorForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="doctor_name">Doctor Name *</label>
+                                <input type="text" id="doctor_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="doctor_specialization">Specialization *</label>
+                                <input type="text" id="doctor_specialization" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="doctor_experience">Experience (years) *</label>
+                                <input type="number" id="doctor_experience" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="doctor_hospital_id">Hospital *</label>
+                                <select id="doctor_hospital_id" required>
+                                    <option value="">Select hospital...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="doctor_available_days">Available Days *</label>
+                                <input type="text" id="doctor_available_days" placeholder="Monday,Tuesday,Friday" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="doctor_available_slots">Available Time Slots *</label>
+                                <input type="text" id="doctor_available_slots" placeholder="09:00,10:00,11:00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="doctor_fee">Consultation Fee *</label>
+                                <input type="number" id="doctor_fee" min="0" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Doctor</button>
+                    </form>
+                </div>
+
+                <div class="form-card">
+                    <h3>Filter Doctors</h3>
+                    <form id="doctorFilterForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="doctor_hospital_filter">Hospital</label>
+                                <select id="doctor_hospital_filter">
+                                    <option value="">All hospitals</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="doctor_specialization_filter">Specialization</label>
+                                <input type="text" id="doctor_specialization_filter" placeholder="e.g. Cardiology">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Filter Doctors</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Doctors</h3>
+                    <div id="doctorDirectoryList" class="patients-list">
+                        <p>Loading doctors...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Book Appointment Section -->
+            <section id="appointments-section" class="content-section">
+                <h2>Book Appointment</h2>
+
+                <div class="form-card">
+                    <h3>Appointment Booking Workflow</h3>
+                    <form id="appointmentForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="appointment_patient_id">Patient *</label>
+                                <select id="appointment_patient_id" required>
+                                    <option value="">Select patient...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointment_city">City</label>
+                                <input type="text" id="appointment_city" placeholder="Filter by city">
+                            </div>
+                            <div class="form-group">
+                                <label for="appointment_pincode">Pincode</label>
+                                <input type="text" id="appointment_pincode" placeholder="Filter by pincode">
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="appointment_hospital_id">Hospital *</label>
+                                <select id="appointment_hospital_id" required>
+                                    <option value="">Select hospital...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointment_specialization">Specialization</label>
+                                <input type="text" id="appointment_specialization" placeholder="Optional filter">
+                            </div>
+                            <div class="form-group">
+                                <label for="appointment_doctor_id">Doctor *</label>
+                                <select id="appointment_doctor_id" required>
+                                    <option value="">Select doctor...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="appointment_date">Appointment Date *</label>
+                                <input type="date" id="appointment_date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointment_time">Time Slot *</label>
+                                <select id="appointment_time" required>
+                                    <option value="">Select slot...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Book Appointment</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Appointment History Section -->
+            <section id="appointment-history-section" class="content-section">
+                <h2>Appointment History</h2>
+
+                <div class="form-card">
+                    <h3>View and Manage Appointments</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="appointment_history_patient_id">Patient *</label>
+                            <select id="appointment_history_patient_id">
+                                <option value="">Select patient...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="loadAppointmentHistory()" class="btn btn-primary">Load Appointments</button>
+                </div>
+
+                <div class="card">
+                    <h3>Upcoming Appointments</h3>
+                    <div id="upcomingAppointmentsContent">
+                        <p>Select a patient to view upcoming appointments.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Appointment History</h3>
+                    <div id="appointmentHistoryContent">
+                        <p>Select a patient to view appointment history.</p>
+                    </div>
                 </div>
             </section>
         </main>

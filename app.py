@@ -10,6 +10,8 @@ import os
 from routes.patient_routes import patient_routes
 from routes.prediction_routes import prediction_routes
 from routes.hospital_routes import hospital_routes
+from routes.doctor_routes import doctor_routes
+from routes.appointment_routes import appointment_routes
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -20,6 +22,8 @@ CORS(app)
 app.register_blueprint(patient_routes)
 app.register_blueprint(prediction_routes)
 app.register_blueprint(hospital_routes)
+app.register_blueprint(doctor_routes)
+app.register_blueprint(appointment_routes)
 
 
 @app.route('/')
@@ -69,6 +73,24 @@ def api_docs():
                 'POST /api/recommend_free_hospitals': 'Get free hospitals nearby',
                 'POST /api/filter_hospitals_by_cost': 'Filter hospitals by cost',
                 'GET /api/patient_recommendations/<id>': 'Get patient recommendations'
+            },
+            'Hospitals': {
+                'POST /api/hospitals': 'Add hospital',
+                'GET /api/hospitals': 'List hospitals (city/state/pincode filters)',
+                'GET /api/hospitals/location/<location>': 'Get hospitals by city/state/pincode',
+                'GET /api/hospitals/<id>': 'Get hospital with available doctors',
+                'GET /api/hospitals/<id>/doctors': 'Get doctors in hospital (optional specialization filter)'
+            },
+            'Doctors': {
+                'POST /api/doctors': 'Add doctor',
+                'GET /api/doctors': 'List doctors (hospital/specialization filters)',
+                'GET /api/doctors/<id>/slots?appointment_date=YYYY-MM-DD': 'Get available slots for doctor'
+            },
+            'Appointments': {
+                'POST /api/appointments/book': 'Book appointment',
+                'PUT /api/appointments/<id>/cancel': 'Cancel appointment',
+                'GET /api/appointments/patient/<patient_id>': 'Get appointment history',
+                'GET /api/appointments/patient/<patient_id>/upcoming': 'Get upcoming appointments'
             },
             'System': {
                 'GET /api/health': 'Health check',

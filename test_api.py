@@ -240,6 +240,124 @@ def test_api_docs():
         print(f"ERROR: {e}")
         return False
 
+def test_add_hospital():
+    """Test add hospital endpoint"""
+    print_header("TEST: ADD HOSPITAL")
+
+    payload = {
+        "hospital_name": "API Test Hospital",
+        "address": "42 Integration Road",
+        "city": "Delhi",
+        "state": "Delhi",
+        "pincode": "110001",
+        "contact_number": "01199998888",
+        "email": "api@testhospital.com",
+        "departments": "Cardiology,Neurology,Orthopedic"
+    }
+
+    try:
+        response = requests.post(f"{BASE_URL}/hospitals", json=payload)
+        data = response.json()
+        print_result("/hospitals", "POST", response.status_code, data)
+
+        if response.status_code == 201:
+            return data.get('hospital_id')
+
+        if response.status_code in [400, 500]:
+            hospitals = requests.get(f"{BASE_URL}/hospitals", params={"city": "Delhi"}).json().get('hospitals', [])
+            for hospital in hospitals:
+                if hospital.get('hospital_name') == payload['hospital_name']:
+                    return hospital.get('hospital_id')
+
+        return None
+    except Exception as e:
+        print(f"ERROR: {e}")
+        return None
+
+def test_add_doctor(hospital_id):
+    """Test add doctor endpoint"""
+    print_header("TEST: ADD DOCTOR")
+
+    payload = {
+        "doctor_name": "Dr. API Test",
+        "specialization": "Cardiology",
+        "experience": 12,
+        "hospital_id": hospital_id,
+        "available_days": "Monday,Tuesday,Friday",
+        "available_time_slots": "09:00,10:00,11:00",
+        "consultation_fee": 900
+    }
+
+    try:
+        response = requests.post(f"{BASE_URL}/doctors", json=payload)
+        data = response.json()
+        print_result("/doctors", "POST", response.status_code, data)
+
+        if response.status_code == 201:
+            return data.get('doctor_id')
+
+        doctors = requests.get(f"{BASE_URL}/doctors", params={"hospital_id": hospital_id}).json().get('doctors', [])
+        for doctor in doctors:
+            if doctor.get('doctor_name') == payload['doctor_name']:
+                return doctor.get('doctor_id')
+
+        return None
+    except Exception as e:
+        print(f"ERROR: {e}")
+        return None
+
+def test_book_and_cancel_appointment(patient_id, hospital_id, doctor_id):
+    """Test appointment booking/history/cancel endpoints"""
+    print_header("TEST: APPOINTMENT BOOKING FLOW")
+
+    from datetime import date, timedelta
+    appointment_date = (date.today() + timedelta(days=1)).strftime('%Y-%m-%d')
+
+    try:
+        slots_resp = requests.get(
+            f"{BASE_URL}/doctors/{doctor_id}/slots",
+            params={"appointment_date": appointment_date}
+        )
+        slots_data = slots_resp.json()
+        print_result(f"/doctors/{doctor_id}/slots", "GET", slots_resp.status_code, slots_data)
+
+        if slots_resp.status_code != 200:
+            return False
+
+        slots = slots_data.get('available_slots', [])
+        if not slots:
+            print("No slots available to book")
+            return False
+
+        payload = {
+            "patient_id": patient_id,
+            "doctor_id": doctor_id,
+            "hospital_id": hospital_id,
+            "appointment_date": appointment_date,
+            "appointment_time": slots[0]
+        }
+
+        book_resp = requests.post(f"{BASE_URL}/appointments/book", json=payload)
+        book_data = book_resp.json()
+        print_result("/appointments/book", "POST", book_resp.status_code, book_data)
+        if book_resp.status_code != 201:
+            return False
+
+        appointment_id = book_data.get('appointment_id')
+
+        history_resp = requests.get(f"{BASE_URL}/appointments/patient/{patient_id}")
+        print_result(f"/appointments/patient/{patient_id}", "GET", history_resp.status_code, history_resp.json())
+        if history_resp.status_code != 200:
+            return False
+
+        cancel_resp = requests.put(f"{BASE_URL}/appointments/{appointment_id}/cancel")
+        print_result(f"/appointments/{appointment_id}/cancel", "PUT", cancel_resp.status_code, cancel_resp.json())
+
+        return cancel_resp.status_code == 200
+    except Exception as e:
+        print(f"ERROR: {e}")
+        return False
+
 def main():
     """Run all tests"""
     print("\n")
@@ -262,6 +380,9 @@ def main():
         "Recommend Hospital": False,
         "Recommend Free Hospitals": False,
         "Filter Hospitals": False,
+        "Add Hospital": False,
+        "Add Doctor": False,
+        "Book Appointment Flow": False,
         "Patient History": False,
         "Update Patient": False,
         "API Documentation": False
@@ -297,6 +418,21 @@ def main():
             
             # Test filter hospitals
             results["Filter Hospitals"] = test_filter_hospitals_by_cost(patient_id)
+
+            hospital_id = test_add_hospital()
+            results["Add Hospital"] = hospital_id is not None
+
+            doctor_id = None
+            if hospital_id:
+                doctor_id = test_add_doctor(hospital_id)
+                results["Add Doctor"] = doctor_id is not None
+
+            if hospital_id and doctor_id:
+                results["Book Appointment Flow"] = test_book_and_cancel_appointment(
+                    patient_id=patient_id,
+                    hospital_id=hospital_id,
+                    doctor_id=doctor_id
+                )
             
             # Test patient history
             results["Patient History"] = test_patient_history(patient_id)

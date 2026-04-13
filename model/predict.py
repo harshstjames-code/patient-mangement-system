@@ -42,7 +42,7 @@ class DiseasePredictor:
             with open(os.path.join(model_dir, 'disease_remedies.pkl'), 'rb') as f:
                 self.disease_remedies = pickle.load(f)
             
-            print("✓ Model loaded successfully!")
+            print("[OK] Model loaded successfully!")
             
         except FileNotFoundError as e:
             print(f"Error: {e}")

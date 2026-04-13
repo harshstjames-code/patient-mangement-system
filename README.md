@@ -24,16 +24,24 @@ A comprehensive healthcare management system combining machine learning for dise
 - Shows hospital details: type, contact, emergency availability
 - Calculates distance from patient location
 
-### 4. **Prediction History & Tracking**
+### 4. **Doctor Appointment Booking**
+- Hospital module with searchable hospital directory (city, state, pincode)
+- Doctor module linked to hospitals with specialization and schedule
+- Appointment booking workflow: patient -> hospital -> doctor -> slot -> book
+- Double-booking prevention for doctor/date/time slot
+- Appointment status tracking (Booked, Completed, Cancelled)
+- Appointment history and upcoming appointments
+
+### 5. **Prediction History & Tracking**
 - Stores all predictions and recommendations
 - View complete medical journey
 - Track confidence levels and severity scores
 - Historical data for better health management
 
-### 5. **User-Friendly Dashboard**
+### 6. **User-Friendly Dashboard**
 - Intuitive web interface for all operations
 - Real-time API documentation
-- Multiple sections: Patients, Predictions, Hospitals, History
+- Multiple sections: Patients, Predictions, Hospitals, Doctor Directory, Appointments, History
 - Responsive design for desktop and mobile
 
 ## 💻 Tech Stack
@@ -70,6 +78,8 @@ patient_management_ml/
 │   ├── patient_routes.py          # Patient management endpoints
 │   ├── prediction_routes.py       # Disease prediction endpoints
 │   └── hospital_routes.py         # Hospital recommendation endpoints
+│   ├── doctor_routes.py           # Doctor management endpoints
+│   └── appointment_routes.py      # Appointment booking endpoints
 ├── templates/
 │   ├── index.html                 # Home page
 │   └── dashboard.html             # Dashboard interface
@@ -164,6 +174,33 @@ The application will start at `http://localhost:5000`
 | POST | `/api/recommend_free_hospitals` | Get free hospitals nearby |
 | POST | `/api/filter_hospitals_by_cost` | Filter by cost category |
 | GET | `/api/patient_recommendations/<id>` | Get patient recommendations |
+
+### Hospital Directory
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/hospitals` | Add a hospital |
+| GET | `/api/hospitals` | List hospitals with filters |
+| GET | `/api/hospitals/location/<location>` | Search by city/state/pincode |
+| GET | `/api/hospitals/<id>` | Get hospital details and doctors |
+| GET | `/api/hospitals/<id>/doctors` | Get doctors in hospital |
+
+### Doctor Management
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/doctors` | Add doctor |
+| GET | `/api/doctors` | List doctors with filters |
+| GET | `/api/doctors/<id>/slots` | Get available slots by date |
+
+### Appointment Booking
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/appointments/book` | Book appointment |
+| PUT | `/api/appointments/<id>/cancel` | Cancel appointment |
+| GET | `/api/appointments/patient/<id>` | Appointment history |
+| GET | `/api/appointments/patient/<id>/upcoming` | Upcoming appointments |
 
 ### System
 

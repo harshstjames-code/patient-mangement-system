@@ -17,7 +17,7 @@ class HospitalRecommender:
         try:
             if os.path.exists(hospital_data_path):
                 self.hospitals_df = pd.read_csv(hospital_data_path)
-                print(f"✓ Loaded {len(self.hospitals_df)} hospitals from database")
+                print(f"[OK] Loaded {len(self.hospitals_df)} hospitals from database")
             else:
                 print(f"Warning: Hospital data file not found at {hospital_data_path}")
                 self.hospitals_df = pd.DataFrame()

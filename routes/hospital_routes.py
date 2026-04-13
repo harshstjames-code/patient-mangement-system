@@ -11,6 +11,123 @@ recommender = HospitalRecommender()
 db = PatientDatabase()
 
 
+def getHospitalsByLocation(location):
+    """Optional helper for searching hospitals by city/state/pincode."""
+    return db.get_hospitals_by_location(location)
+
+
+@hospital_routes.route('/hospitals', methods=['POST'])
+def add_hospital():
+    """Add a new hospital"""
+    try:
+        data = request.get_json()
+        required_fields = [
+            'hospital_name', 'address', 'city', 'state',
+            'pincode', 'contact_number'
+        ]
+
+        for field in required_fields:
+            if field not in data or str(data.get(field)).strip() == '':
+                return jsonify({'status': 'error', 'message': f'Missing field: {field}'}), 400
+
+        hospital_id = db.add_hospital(
+            hospital_name=data.get('hospital_name'),
+            address=data.get('address'),
+            city=data.get('city'),
+            state=data.get('state'),
+            pincode=data.get('pincode'),
+            contact_number=data.get('contact_number'),
+            email=data.get('email', ''),
+            departments=data.get('departments', '')
+        )
+
+        if not hospital_id:
+            return jsonify({'status': 'error', 'message': 'Failed to add hospital'}), 500
+
+        return jsonify({
+            'status': 'success',
+            'message': 'Hospital added successfully',
+            'hospital_id': hospital_id
+        }), 201
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+@hospital_routes.route('/hospitals', methods=['GET'])
+def list_hospitals():
+    """List hospitals with optional city/state/pincode filters"""
+    try:
+        city = request.args.get('city')
+        state = request.args.get('state')
+        pincode = request.args.get('pincode')
+
+        hospitals = db.get_hospitals(city=city, state=state, pincode=pincode)
+        return jsonify({
+            'status': 'success',
+            'total_hospitals': len(hospitals),
+            'hospitals': hospitals
+        }), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+@hospital_routes.route('/hospitals/location/<string:location>', methods=['GET'])
+def hospitals_by_location(location):
+    """Search hospitals by a location token (city/state/pincode)"""
+    try:
+        hospitals = getHospitalsByLocation(location)
+        return jsonify({
+            'status': 'success',
+            'location': location,
+            'total_hospitals': len(hospitals),
+            'hospitals': hospitals
+        }), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+@hospital_routes.route('/hospitals/<int:hospital_id>', methods=['GET'])
+def get_hospital(hospital_id):
+    """Get hospital with contact details and available doctors"""
+    try:
+        hospital = db.get_hospital(hospital_id)
+        if not hospital:
+            return jsonify({'status': 'error', 'message': 'Hospital not found'}), 404
+
+        doctors = db.get_doctors(hospital_id=hospital_id)
+        return jsonify({
+            'status': 'success',
+            'hospital': hospital,
+            'available_doctors': doctors,
+            'total_doctors': len(doctors)
+        }), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+@hospital_routes.route('/hospitals/<int:hospital_id>/doctors', methods=['GET'])
+def get_hospital_doctors(hospital_id):
+    """Get doctors available in a hospital (optionally filtered by specialization)"""
+    try:
+        hospital = db.get_hospital(hospital_id)
+        if not hospital:
+            return jsonify({'status': 'error', 'message': 'Hospital not found'}), 404
+
+        specialization = request.args.get('specialization')
+        doctors = db.get_doctors(hospital_id=hospital_id, specialization=specialization)
+
+        return jsonify({
+            'status': 'success',
+            'hospital_id': hospital_id,
+            'hospital_name': hospital['hospital_name'],
+            'specialization_filter': specialization,
+            'total_doctors': len(doctors),
+            'doctors': doctors
+        }), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
 @hospital_routes.route('/recommend_hospital', methods=['POST'])
 def recommend_hospital():
     """
