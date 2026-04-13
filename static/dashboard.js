@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function initializeEventListeners() {
     document.getElementById('addPatientForm').addEventListener('submit', handleAddPatient);
     document.getElementById('predictForm').addEventListener('submit', handlePredict);
+    document.getElementById('predictBtn').addEventListener('click', handlePredictButtonClick);
     document.getElementById('hospitalForm').addEventListener('submit', handleFindHospitals);
 
     document.getElementById('hospitalSearchForm').addEventListener('submit', handleHospitalSearch);
@@ -31,6 +32,44 @@ function initializeEventListeners() {
     document.getElementById('appointment_city').addEventListener('blur', loadHospitalsForAppointmentFlow);
     document.getElementById('appointment_pincode').addEventListener('blur', loadHospitalsForAppointmentFlow);
     document.getElementById('appointment_specialization').addEventListener('blur', loadAppointmentDoctors);
+}
+
+
+function handlePredictButtonClick() {
+    // Log each button click so repeated prediction triggers are easy to verify in browser console.
+    console.log('Predict button clicked');
+}
+
+
+function buildPredictionPayload() {
+    const patientId = document.getElementById('predict_patient_id').value;
+    const symptomsText = document.getElementById('symptoms').value.trim();
+
+    // Build a fresh payload on every call so stale values are never reused.
+    const payload = {
+        patient_id: patientId,
+        symptoms: symptomsText
+    };
+
+    // Optional checkbox mode support if these inputs exist in future UI updates.
+    const checkboxIds = ['fever', 'cough', 'headache', 'fatigue', 'nausea'];
+    const hasCheckboxMode = checkboxIds.every(id => document.getElementById(id));
+
+    if (hasCheckboxMode) {
+        const symptomsDict = {
+            fever: Number(document.getElementById('fever').checked),
+            cough: Number(document.getElementById('cough').checked),
+            headache: Number(document.getElementById('headache').checked),
+            fatigue: Number(document.getElementById('fatigue').checked),
+            nausea: Number(document.getElementById('nausea').checked)
+        };
+
+        const selectedSymptoms = Object.keys(symptomsDict).filter(key => symptomsDict[key] === 1);
+        payload.symptoms_dict = symptomsDict;
+        payload.symptoms = selectedSymptoms.join(', ');
+    }
+
+    return payload;
 }
 
 
@@ -202,23 +241,37 @@ async function deletePatient(patientId) {
 async function handlePredict(e) {
     e.preventDefault();
 
-    const patientId = document.getElementById('predict_patient_id').value;
-    const symptoms = document.getElementById('symptoms').value;
+    const payload = buildPredictionPayload();
+    const patientId = payload.patient_id;
 
     if (!patientId) {
         showAlert('Please select a patient', 'error');
         return;
     }
 
+    if (!payload.symptoms) {
+        showAlert('Please enter at least one symptom', 'error');
+        return;
+    }
+
+    console.log('Prediction running with symptoms:', payload);
+
+    // Clear previous output while new prediction is in progress.
+    const content = document.getElementById('resultContent');
+    content.innerHTML = '<p>Running prediction...</p>';
+    document.getElementById('predictionResult').style.display = 'block';
+
     try {
-        const response = await fetch(`${API_BASE}/predict_disease`, {
+        const response = await fetch(`${API_BASE}/predict_disease?t=${Date.now()}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ patient_id: patientId, symptoms })
+            cache: 'no-store',
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();
         if (data.status === 'success') {
+            console.log('Prediction completed:', data);
             displayPredictionResult(data);
         } else {
             showAlert(`Error: ${data.message}`, 'error');
@@ -235,7 +288,7 @@ function displayPredictionResult(data) {
 
     const severityColor = data.severity === 'High' ? '#dc3545' : data.severity === 'Medium' ? '#ffc107' : '#28a745';
 
-    const topPredictions = data.top_3_predictions.map((pred, index) => `
+    const topPredictions = (data.top_3_predictions || []).map((pred, index) => `
         <div style="display: grid; grid-template-columns: 20px 1fr; gap: 10px; margin-bottom: 8px;">
             <span>${index + 1}.</span>
             <span><strong>${pred.disease}</strong> - ${(pred.confidence * 100).toFixed(2)}% (${pred.severity})</span>
@@ -263,7 +316,8 @@ function displayPredictionResult(data) {
                 </div>
             </div>
 
-            <p><strong>Input Symptoms:</strong> ${data.symptoms}</p>
+            <p><strong>Input Symptoms:</strong> ${data.symptoms || 'N/A'}</p>
+            <p><strong>Last Updated:</strong> ${new Date().toLocaleTimeString()}</p>
             <div class="dos-donts">
                 <div class="dos-list">
                     <h4><i class="fas fa-check-circle"></i> Do's</h4>

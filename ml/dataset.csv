@@ -1,0 +1,25 @@
+fever,cough,headache,fatigue,vomiting,chest_pain,disease
+1,0,1,1,0,0,Flu
+1,0,1,1,0,0,Flu
+1,1,1,1,0,0,Flu
+1,0,1,1,1,0,Flu
+1,0,1,0,0,0,Flu
+1,1,1,0,0,0,Flu
+0,1,0,1,0,0,Common Cold
+0,1,0,1,0,0,Common Cold
+0,1,0,0,0,0,Common Cold
+0,1,1,1,0,0,Common Cold
+0,1,0,1,0,0,Common Cold
+0,1,0,0,0,0,Common Cold
+0,0,1,1,0,0,Migraine
+0,0,1,1,0,0,Migraine
+0,0,1,0,1,0,Migraine
+0,0,1,1,1,0,Migraine
+0,0,1,1,0,0,Migraine
+0,0,1,0,0,0,Migraine
+1,0,0,1,1,0,Food Poisoning
+1,0,0,1,1,0,Food Poisoning
+1,0,0,0,1,0,Food Poisoning
+1,1,0,1,1,0,Food Poisoning
+1,0,0,1,0,0,Food Poisoning
+1,0,0,0,1,0,Food Poisoning

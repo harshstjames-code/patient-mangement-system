@@ -22,13 +22,21 @@ def predict_disease():
     }
     """
     try:
-        data = request.get_json()
-        
-        if 'symptoms' not in data:
+        data = request.get_json(silent=True) or {}
+
+        # Always rebuild the symptoms string from the current request payload.
+        symptoms_dict = data.get('symptoms_dict')
+        if isinstance(symptoms_dict, dict):
+            symptoms = ', '.join([key for key, value in symptoms_dict.items() if int(value) == 1])
+        else:
+            symptoms = (data.get('symptoms') or '').strip()
+
+        if not symptoms:
             return jsonify({'status': 'error', 'message': 'symptoms field is required'}), 400
-        
+
         patient_id = data.get('patient_id')
-        symptoms = data.get('symptoms')
+
+        print(f"[OK] Prediction request received - patient_id={patient_id}, symptoms={symptoms}")
         
         # Get prediction
         prediction_result = predictor.predict(symptoms)
@@ -58,8 +66,11 @@ def predict_disease():
             prediction_result['prediction_id'] = pred_id
         
         # Add additional metrics
+        prediction_result['symptoms'] = symptoms
         prediction_result['severity_score'] = severity_score
         prediction_result['recommendation_confidence'] = recommendation_confidence
+
+        print(f"[OK] Prediction completed - patient_id={patient_id}, disease={prediction_result['predicted_disease']}")
         
         return jsonify(prediction_result), 200
             
